@@ -1,8 +1,9 @@
 #include <Arduino.h>
+#include "../src/dummyLib.hpp"
 
 void setup() {
     Serial.begin(9600);
-    Serial.println("I'm a dummy !");
+    Serial.println(dummyFunction());
 }
 
 void loop() {
