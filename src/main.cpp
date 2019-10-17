@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include "GamePadBLE.h"
-#define ARDUHAL_LOG_LEVEL = 5
 void setup() {
   Serial.begin(115200);
   initGamePad("q","d", "z", "s","a","e","o", "p");
