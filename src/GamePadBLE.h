@@ -55,8 +55,6 @@ class MyCallbacks : public BLEServerCallbacks {
  */
  class MyOutputCallbacks : public BLECharacteristicCallbacks {
  void onWrite(BLECharacteristic* me){
-    Serial.print("Hey");
-    Serial.print(me->getValue().c_str());
     uint8_t* value = (uint8_t*)(me->getValue().c_str());
     ESP_LOGI(LOG_TAG, "special keys: %d", *value);
   }
@@ -83,52 +81,51 @@ void taskServer(void*){
 //  pSecurity->setKeySize();
   pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND);
 
-    const uint8_t report[] = {
-      USAGE_PAGE(1),      0x01,       // Generic Desktop Ctrls
-      USAGE(1),           0x06,       // Keyboard
-      COLLECTION(1),      0x01,       // Application
-      REPORT_ID(1),       0x01,        //   Report ID (1)
-      USAGE_PAGE(1),      0x07,       //   Kbrd/Keypad
-      USAGE_MINIMUM(1),   0xE0,
-      USAGE_MAXIMUM(1),   0xE7,
+  const uint8_t report[] = {
+      USAGE_PAGE(1), 0x01, // Generic Desktop Ctrls
+      USAGE(1), 0x06,      // Keyboard
+      COLLECTION(1), 0x01, // Application
+      REPORT_ID(1), 0x01,  //   Report ID (1)
+      USAGE_PAGE(1), 0x07, //   Kbrd/Keypad
+      USAGE_MINIMUM(1), 0xE0,
+      USAGE_MAXIMUM(1), 0xE7,
       LOGICAL_MINIMUM(1), 0x00,
       LOGICAL_MAXIMUM(1), 0x01,
-      REPORT_SIZE(1),     0x01,       //   1 byte (Modifier)
-      REPORT_COUNT(1),    0x08,
-      HIDINPUT(1),           0x02,       //   Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position
-      REPORT_COUNT(1),    0x01,       //   1 byte (Reserved)
-      REPORT_SIZE(1),     0x08,
-      HIDINPUT(1),           0x01,       //   Const,Array,Abs,No Wrap,Linear,Preferred State,No Null Position
-      REPORT_COUNT(1),    0x06,       //   6 bytes (Keys)
-      REPORT_SIZE(1),     0x08,
+      REPORT_SIZE(1), 0x01, //   1 byte (Modifier)
+      REPORT_COUNT(1), 0x08,
+      HIDINPUT(1), 0x02,     //   Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position
+      REPORT_COUNT(1), 0x01, //   1 byte (Reserved)
+      REPORT_SIZE(1), 0x08,
+      HIDINPUT(1), 0x01,     //   Const,Array,Abs,No Wrap,Linear,Preferred State,No Null Position
+      REPORT_COUNT(1), 0x06, //   6 bytes (Keys)
+      REPORT_SIZE(1), 0x08,
       LOGICAL_MINIMUM(1), 0x00,
-      LOGICAL_MAXIMUM(1), 0x65,       //   101 keys
-      USAGE_MINIMUM(1),   0x00,
-      USAGE_MAXIMUM(1),   0x65,
-      HIDINPUT(1),           0x00,       //   Data,Array,Abs,No Wrap,Linear,Preferred State,No Null Position
-      REPORT_COUNT(1),    0x05,       //   5 bits (Num lock, Caps lock, Scroll lock, Compose, Kana)
-      REPORT_SIZE(1),     0x01,
-      USAGE_PAGE(1),      0x08,       //   LEDs
-      USAGE_MINIMUM(1),   0x01,       //   Num Lock
-      USAGE_MAXIMUM(1),   0x05,       //   Kana
-      HIDOUTPUT(1),          0x02,       //   Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position,Non-volatile
-      REPORT_COUNT(1),    0x01,       //   3 bits (Padding)
-      REPORT_SIZE(1),     0x03,
-      HIDOUTPUT(1),          0x01,       //   Const,Array,Abs,No Wrap,Linear,Preferred State,No Null Position,Non-volatile
-      END_COLLECTION(0)
-    };
+      LOGICAL_MAXIMUM(1), 0x65, //   101 keys
+      USAGE_MINIMUM(1), 0x00,
+      USAGE_MAXIMUM(1), 0x65,
+      HIDINPUT(1), 0x00,     //   Data,Array,Abs,No Wrap,Linear,Preferred State,No Null Position
+      REPORT_COUNT(1), 0x05, //   5 bits (Num lock, Caps lock, Scroll lock, Compose, Kana)
+      REPORT_SIZE(1), 0x01,
+      USAGE_PAGE(1), 0x08,    //   LEDs
+      USAGE_MINIMUM(1), 0x01, //   Num Lock
+      USAGE_MAXIMUM(1), 0x05, //   Kana
+      HIDOUTPUT(1), 0x02,     //   Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position,Non-volatile
+      REPORT_COUNT(1), 0x01,  //   3 bits (Padding)
+      REPORT_SIZE(1), 0x03,
+      HIDOUTPUT(1), 0x01, //   Const,Array,Abs,No Wrap,Linear,Preferred State,No Null Position,Non-volatile
+      END_COLLECTION(0)};
 
-    hid->reportMap((uint8_t*)report, sizeof(report));
-    hid->startServices();
+  hid->reportMap((uint8_t *)report, sizeof(report));
+  hid->startServices();
 
-    BLEAdvertising *pAdvertising = pServer->getAdvertising();
-    pAdvertising->setAppearance(HID_GAMEPAD);
-    pAdvertising->addServiceUUID(hid->hidService()->getUUID());
-    pAdvertising->start();
-    hid->setBatteryLevel(100);
+  BLEAdvertising *pAdvertising = pServer->getAdvertising();
+  pAdvertising->setAppearance(HID_GAMEPAD);
+  pAdvertising->addServiceUUID(hid->hidService()->getUUID());
+  pAdvertising->start();
+  hid->setBatteryLevel(100);
 
-    ESP_LOGD(LOG_TAG, "Advertising started!");
-    delay(portMAX_DELAY);
+  ESP_LOGD(LOG_TAG, "Advertising started!");
+  delay(portMAX_DELAY);
   
 };
 
@@ -138,7 +135,7 @@ void initGamePad(const char* left, const char* right, const char* up, const char
   keyControls[0] = left;
   keyControls[1] = right;
   keyControls[2] = up;
-  keyControls[3] = right;
+  keyControls[3] = down;
   keyControls[4] = A;
   keyControls[5] = B;
   keyControls[6] = start;
