@@ -1,0 +1,6 @@
+dbus-python==1.2.12
+gatt==0.2.7
+ruamel.yaml==0.16.5
+ruamel.yaml.clib==0.2.0
+vext==0.7.3
+vext.gi==0.7.0
