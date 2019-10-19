@@ -11,39 +11,16 @@ shared = {
     "logs": []
 }
 
-stop_curses = False
-stop_drawing_logs = False
-
 threads = []
-
-
-def draw_logs(stdscr, win, winyx, winpos):
-    global stop_drawing_logs
-    while not stop_drawing_logs:
-        stdscr.clear()
-        stdscr.border()
-
-        height, width = stdscr.getmaxyx()
-
-        with lock:
-            logs = shared["logs"]
-            start = 0 if (len(logs) < height - 2) else (len(logs) - height + 2)
-            for index, log in enumerate(logs[start:]):
-                stdscr.addstr(index + 1, 1, str(log))
-
-        stdscr.move(winyx()[0], winyx()[1])
-        stdscr.refresh()
-
-        time.sleep(0.3)
-
-    with lock:
-        shared["logs"].append("Stopping log drawing thread")
 
 
 def draw_screen(stdscr):
     # Clear and refresh the screen for a blank canvas
     stdscr.clear()
     stdscr.refresh()
+    stdscr.nodelay(True)
+
+    curses.echo()
 
     # Start colors in curses
     curses.start_color()
@@ -52,41 +29,58 @@ def draw_screen(stdscr):
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
     height, width = stdscr.getmaxyx()
-    win = curses.newwin(1, width - 1, height - 1,  0)
-    winLogs = curses.newwin(height - 1, width, 0, 0)
+    win = curses.newwin(3, width, height - 3,  0)
+    winLogs = curses.newwin(height - 3, width, 0, 0)
 
-    logsThread = Thread(target=draw_logs, args=(
-        winLogs, win,
-        lambda: win.getyx(),
-        lambda: win.getparyx()
-    ))
-    logsThread.start()
-    threads.append(logsThread)
+    win.timeout(300)
+    win.clear()
+    winLogs.clear()
+    win.border()
+    winLogs.border()
+    win.refresh()
+    winLogs.refresh()
+
+    char_pos = 1
+    current_str = ""
 
     global stop_curses
     global device
     try:
         while True:
             win.clear()
+            winLogs.clear()
+            win.border()
+            winLogs.border()
 
-            height, width = stdscr.getmaxyx()
+            with lock:
+                logs = shared["logs"]
+                start = 0 if (len(logs) < height - 5) else (len(logs) - height + 5)
+                for index, log in enumerate(logs[start:]):
+                    winLogs.addstr(index + 1, 1, str(log))
 
-            tb = curses.textpad.Textbox(win)
-            tb.stripspaces = True
-            text = tb.edit()
+            win.addstr(1, 1, current_str)
 
-            if device is not None:
-                device.write(text)
+            new_char = win.getch(1, char_pos)
 
+            if new_char != -1 and new_char <= 255:
+                if new_char == 10 and device is not None:
+                    device.write(current_str)
+                    current_str = ""
+                    char_pos = 1
+                elif new_char == 8 or new_char == 127 or new_char == curses.KEY_BACKSPACE:
+                    char_pos -= 1
+                    current_str = current_str[:-1]
+                else:
+                    char_pos += 1
+                    current_str += chr(new_char)
+
+            winLogs.refresh()
             win.refresh()
-
     except KeyboardInterrupt:
         pass
 
     with lock:
         shared["logs"].append("Stopping curses")
-    global stop_drawing_logs
-    stop_drawing_logs = True
 
 
 def send_and_wait(device, message):
