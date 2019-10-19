@@ -6,9 +6,6 @@
 .vscode/
 *.code-workspace
 software/.env
-<<<<<<< HEAD
 software/venv
-=======
 __pycache__/
 lua/*.txt
->>>>>>> cf909e1739c8c5ab7e038371cd3afffb16df83cb
