@@ -6,11 +6,15 @@ WRITE_CHARACTERISTIC = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
 
 
 class BLEComm(gatt.Device):
-    def __init__(self, logs, lock, debug, *args, **kwargs):
+    def __init__(
+            self, logs, lock, debug, *args,
+            on_message_received=None,
+            **kwargs):
         super().__init__(*args, **kwargs)
         self.logs = logs
         self.lock = lock
         self.debug = debug
+        self.on_message_received = on_message_received
 
         self.message_sent = True
         self.write_characteristic = None
@@ -96,6 +100,8 @@ class BLEComm(gatt.Device):
         self.append_log(
             "[{}] Received: {}".format(self.mac_address, value)
         )
+        if self.on_message_received is not None:
+            self.on_message_received(value)
 
     def characteristic_write_value_failed(self, characteristic, error):
         self.append_log("Error writing value: {}".format(error))
@@ -104,6 +110,9 @@ class BLEComm(gatt.Device):
         self.message_sent = True
 
     def write(self, value):
+        self.write_raw(value.encode())
+
+    def write_raw(self, value):
         if self.write_characteristic is None:
             self.append_log(
                 "[{}] Can't send message '{}' ({})".format(
@@ -121,7 +130,7 @@ class BLEComm(gatt.Device):
                 value
             )
         )
-        self.write_characteristic.write_value(value.encode())
+        self.write_characteristic.write_value(value)
 
     def is_setup(self):
         return self.setup

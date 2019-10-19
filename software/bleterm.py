@@ -3,6 +3,8 @@ from threading import Thread, Lock
 from blecomm import BLEComm
 import curses
 import gatt
+from os import read, ttyname, write
+import pty
 
 
 class BLETerm():
@@ -12,10 +14,15 @@ class BLETerm():
         self.logs = []
         self.lock = Lock()
 
+        self.serial_master = None
+        self.serial_slave = None
+        self.first_read = True
+
         self.device = BLEComm(
             self.logs,
             self.lock,
             False,
+            on_message_received=self.on_message_received,
             manager=self.manager,
             mac_address=mac_address
         )
@@ -24,7 +31,39 @@ class BLETerm():
         self.blecomm_thread = Thread(target=self.manager.run)
         self.blecomm_thread.start()
 
-    def open(self):
+    def open_serial_bridge(self):
+        self.serial_master, self.serial_slave = pty.openpty()
+        s_name = ttyname(self.serial_slave)
+        m_name = ttyname(self.serial_master)
+
+        print("Slave: {}".format(s_name))
+        print("Master: {}".format(m_name))
+
+        try:
+            while not self.device.is_setup():
+                pass
+            print("Connected !")
+            res = b""
+            while True:
+                c = read(self.serial_master, 1)
+                res += c
+                if (res.endswith(b'\r')
+                        or res.endswith(b'\n')
+                        or res.endswith(b"\r\n")):
+                    formatted = res.decode("utf-8").strip()
+                    if len(formatted) > 0 and not self.first_read:
+                        formatted += '\n'
+                        formatted = formatted.encode()
+                        print("BLE <- : {}".format(
+                            formatted))
+                        self.device.write_raw(formatted)
+
+                    self.first_read = False
+                    res = b''
+        except KeyboardInterrupt:
+            pass
+
+    def open_monitor(self):
         curses.wrapper(self.draw_screen)
 
     def close(self):
@@ -33,8 +72,15 @@ class BLETerm():
             print("Device disconnected")
         except DBusException as error:
             print(error)
+
         self.manager.stop()
         self.blecomm_thread.join()
+
+    def on_message_received(self, message):
+        if self.serial_master is not None and not self.first_read:
+            write(self.serial_master, message)
+            print("BLE -> : {}".format(message))
+        self.first_read = True
 
     def draw_screen(self, stdscr):
         # Clear and refresh the screen for a blank canvas

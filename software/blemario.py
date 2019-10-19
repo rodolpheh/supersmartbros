@@ -46,11 +46,14 @@ if __name__ == "__main__":
     )
     args = arg_parser.parse_args()
 
-    if args.mode == 'monitor':
+    if args.mode == 'monitor' or args.mode == 'serial':
         bleterm = BLETerm(args.mac_address)
-        bleterm.open()
-        bleterm.close()
-        exit(0)
+        if args.mode == 'monitor':
+            bleterm.open_monitor()
+            bleterm.close()
+        elif args.mode == 'serial':
+            bleterm.open_serial_bridge()
+            bleterm.close()
     elif args.mode == 'write' or args.mode == 'listen':
         print("Connecting...")
 
