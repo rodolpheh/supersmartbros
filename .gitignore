@@ -5,3 +5,5 @@
 .vscode/ipch
 .vscode/
 *.code-workspace
+software/.env
+software/venv

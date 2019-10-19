@@ -24,6 +24,11 @@ enum Controls
     START
 };
 
+
+extern bool connected;
+extern BLECharacteristic* pTxCharacteristic;
+extern BLECharacteristic* pRxCharacteristic;
+
 void taskServer(void*);
 
 void initGamePad(const char* left, const char* right, const char* up, const char* down,
