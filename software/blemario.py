@@ -1,6 +1,5 @@
 import gatt
 from threading import Thread, Lock
-import time
 from dbus.exceptions import DBusException
 from blecomm import BLEComm
 
@@ -54,7 +53,8 @@ def draw_screen(stdscr):
 
             with lock:
                 logs = shared["logs"]
-                start = 0 if (len(logs) < height - 5) else (len(logs) - height + 5)
+                start = (0 if (len(logs) < height - 5)
+                         else (len(logs) - height + 5))
                 for index, log in enumerate(logs[start:]):
                     winLogs.addstr(index + 1, 1, str(log))
 
@@ -67,7 +67,9 @@ def draw_screen(stdscr):
                     device.write(current_str)
                     current_str = ""
                     char_pos = 1
-                elif new_char == 8 or new_char == 127 or new_char == curses.KEY_BACKSPACE:
+                elif (new_char == 8
+                        or new_char == 127
+                        or new_char == curses.KEY_BACKSPACE):
                     char_pos -= 1
                     current_str = current_str[:-1]
                 else:
