@@ -6,5 +6,6 @@
 .vscode/
 *.code-workspace
 software/.env
+software/venv
 __pycache__/
 lua/*.txt

@@ -1,13 +1,4 @@
-#include <Arduino.h>
-#include <BLEDevice.h>
-#include <BLEUtils.h>
-#include <BLEServer.h>
-#include "BLE2902.h"
-#include "BLEHIDDevice.h"
-#include "HIDTypes.h"
-//#include "HIDKeyboardTypes.h"
-#include <driver/adc.h>
-#include "keymaps.h"
+#include "GamePadBLE.h"
 
 #define SERVICE_UART_UUID      "6E400001-B5A3-F393-E0A9-E50E24DCCA9E" // UART service UUID
 #define CHARACTERISTIC_UUID_RX "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
@@ -16,17 +7,6 @@
 BLECharacteristic* pTxCharacteristic = NULL;
 BLECharacteristic* pRxCharacteristic = NULL;
 
-enum Controls
-{
-    LEFT,
-    RIGHT,
-    UP,
-    DOWN,
-    A,
-    B,
-    SELECT,
-    START
-};
 const char* keyControls[8] = {"q","d","z","s","a","e","o","p"};
 BLEHIDDevice* hid;
 BLECharacteristic* input;
