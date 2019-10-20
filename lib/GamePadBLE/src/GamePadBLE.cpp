@@ -51,8 +51,9 @@ class MyCallbacks : public BLEServerCallbacks {
     {
       Serial.println("*********");
       Serial.print("Received Value: ");
-      for (int i = 0; i < rxValue.length(); i++)
+      for (int i = 0; i < rxValue.length(); i++){
         Serial.print(rxValue[i]);
+      }
       Serial.println();
       Serial.println("*********");
     }
@@ -179,11 +180,11 @@ void press(Controls direction) {
 void pressForSeconds(Controls key, float seconds){
   unsigned long now = millis();
   unsigned long until = now + seconds*1000;
-  unsigned long numberOfPress = 0;
+  //unsigned long numberOfPress = 0;
   while(now < until){
     press(key);
     now = millis();
-    numberOfPress ++;
+    //numberOfPress ++;
   }
-  Serial.println(numberOfPress);
+  //Serial.println(numberOfPress);
 }

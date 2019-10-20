@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <GamePadBLE.h>
+#include <MMA7361.h>
 
 int value = 0;
 
@@ -10,6 +11,8 @@ void setup() {
 }
 
 void loop() {
+  xyz orientation = MMA7361_getValues();
+
   //press(Controls::A);
   //press(Controls::A);
   //press(Controls::B);
