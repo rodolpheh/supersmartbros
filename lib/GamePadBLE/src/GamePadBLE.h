@@ -11,6 +11,7 @@
 //#include "HIDKeyboardTypes.h"
 #include <driver/adc.h>
 #include "keymaps.h"
+#include <time.h>
 
 enum Controls
 {
@@ -35,5 +36,6 @@ void initGamePad(const char* left, const char* right, const char* up, const char
                  const char* A, const char* B, const char* start, const char* select);
 
 void press(Controls direction);
+void pressForSeconds(Controls direction, float seconds);
 
 #endif

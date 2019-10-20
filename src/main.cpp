@@ -6,6 +6,7 @@ int value = 0;
 void setup() {
   Serial.begin(115200);
   initGamePad("q","d", "z", "s","a","e","o", "p");
+  //pressForSeconds(Controls::RIGHT, 2.0);
 }
 
 void loop() {

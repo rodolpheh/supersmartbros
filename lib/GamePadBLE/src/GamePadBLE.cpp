@@ -175,3 +175,15 @@ void press(Controls direction) {
   }
   delay(50);
 }
+
+void pressForSeconds(Controls key, float seconds){
+  unsigned long now = millis();
+  unsigned long until = now + seconds*1000;
+  unsigned long numberOfPress = 0;
+  while(now < until){
+    press(key);
+    now = millis();
+    numberOfPress ++;
+  }
+  Serial.println(numberOfPress);
+}
