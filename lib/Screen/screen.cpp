@@ -9,6 +9,11 @@ void init(){
 }
 
 
+void score(char* score){
+    print_string(score, 45, 24);
+}
+
+
 void update_values(int *values) {
   display.clearDisplay();
   set_header("Super Mario");
