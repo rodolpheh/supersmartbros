@@ -9,24 +9,77 @@ void init(){
 }
 
 
+
+
+int parseInt(char* chars)
+{
+  int sum = 0;
+  int len = strlen(chars);
+  for (int x = 0; x < len; x++)
+  {
+    int n = chars[len - (x + 1)] - '0';
+    sum = sum + powInt(n, x);
+  }
+  return sum;
+}
+int powInt(int x, int y)
+{
+  for (int i = 0; i < y; i++)
+  {
+    x *= 10;
+  }
+  return x;
+}
+
+
 void score(char* score){
     print_string(score, 45, 24);
 }
 
 
-void update_values(int *values) {
+void display_screen_2(char *world, char *life) {
   display.clearDisplay();
   set_header("Super Mario");
-  draw_heart();
+  char val_world[25];
+  char val_life[20];
+  sprintf(val_world, "World : %s", world);
+  sprintf(val_life, "%sx", life);
+  print_string(val_world, 40, 10);
+  print_string(val_life, 60, 22);
+  draw_head();
+}
+
+void display_screen_1(char *lifes, char *coins, char *val_score) {
+  display.clearDisplay();
+  set_header("Super Mario");
   char val_1[20];
   char val_2[20];
-  sprintf(val_1, "x%d", values[0]);
-  sprintf(val_2, "x%d", values[1]);
+  char val_3[20];
+  sprintf(val_1, "x%s", lifes);
+  sprintf(val_2, "x%s", coins);
+  sprintf(val_3, "%06d", parseInt(val_score));
+  draw_heart();
+  draw_coin();
   print_string(val_1, 40, 15);
   print_string(val_2, 95, 15);
-  draw_coin();
+  score(val_3);
   display.display();
 }
+
+void draw_head() {
+  int pos_x = (SCREEN_WIDTH / 6) * 3.5;
+  const int head_height = 10;
+  const int head_width = 15;
+  const unsigned char head [] PROGMEM = {
+    // 'mario_head_png_845452, 15x10px
+    0x00, 0x00, 0x02, 0x80, 0x03, 0x80, 0x00, 0x00, 0x00, 0x00, 0x15, 0x40, 0x17, 0xc0, 0x1b, 0xa0,
+    0x04, 0x40, 0x03, 0x80
+  };
+
+  display.drawBitmap(pos_x, 20, head, head_width, head_height, 1);
+  display.display();
+}
+
 
 
 void draw_heart() {
