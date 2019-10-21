@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "tilt-sensor.h"
 
 bool was_triggered() {
