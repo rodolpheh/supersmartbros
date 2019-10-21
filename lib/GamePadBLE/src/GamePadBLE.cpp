@@ -163,25 +163,44 @@ void press(Controls direction) {
 
     while(*hello){
       KEYMAP map = keymap_fr[(uint8_t)*hello];
-      uint8_t msg[] = {map.modifier, 0x0, map.usage, 0x0,0x0,0x0,0x0,0x0};
+      uint8_t msg[] = {map.modifier, 0x0, map.usage, 0x0, 0x0, 0x0, 0x0, 0x0};
       input->setValue(msg,sizeof(msg));
       input->notify();
       hello++;
-      uint8_t msg1[] = {0x0, 0x0, 0x0, 0x0,0x0,0x0,0x0,0x0};
-
-      input->setValue(msg1,sizeof(msg1));
-      input->notify();
-      delay(10);
     }
   }
-  delay(50);
+}
+
+void release() {
+  if (connected) {
+    uint8_t msg1[] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+    input->setValue(msg1,sizeof(msg1));
+    input->notify();
+  }
+}
+
+void pressThree(Controls first, Controls second, Controls third) {
+  if(connected){
+
+    const char* firstChar = keyControls[(int)first];
+    const char* secondChar = keyControls[(int)second];
+    const char* thirdChar = keyControls[(int)third];
+
+    KEYMAP firstMap = keymap_fr[(uint8_t)*firstChar];
+    KEYMAP secondMap = keymap_fr[(uint8_t)*secondChar];
+    KEYMAP thirdMap = keymap_fr[(uint8_t)*thirdChar];
+
+    uint8_t msg[] = {firstMap.modifier, 0x0, firstMap.usage, secondMap.usage, thirdMap.usage, 0x0, 0x0, 0x0};
+    input->setValue(msg,sizeof(msg));
+    input->notify();
+  }
 }
 
 void pressForSeconds(Controls key, float seconds){
   unsigned long now = millis();
   unsigned long until = now + seconds*1000;
   //unsigned long numberOfPress = 0;
-  while(now < until){
+  while(now < until) {
     press(key);
     now = millis();
     //numberOfPress ++;
