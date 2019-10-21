@@ -1,5 +1,7 @@
 #include <Arduino.h>
-#include <screen.h>
+#include <Screen.h>
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 void init(){
     if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x32

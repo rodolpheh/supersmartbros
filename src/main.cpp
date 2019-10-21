@@ -1,12 +1,14 @@
 #include <Arduino.h>
 #include <GamePadBLE.h>
 #include <MMA7361.h>
+#include <Screen.h>
 
 int value = 0;
 
 void setup() {
   Serial.begin(115200);
   initGamePad("q","d", "z", "s","a","e","o", "p");
+  init();
   //pressForSeconds(Controls::RIGHT, 2.0);
 }
 
@@ -27,6 +29,9 @@ void loop() {
     delay(10); // bluetooth stack will go into congestion, if too many packets are sent
     value++;
   }
+
+  Serial.print("rxValue :");
+  Serial.println(rxValue.c_str());
   //press(Controls::UP);
   //press(Controls::RIGHT);
   vTaskDelay(500);
