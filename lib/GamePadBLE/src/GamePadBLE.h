@@ -28,6 +28,7 @@ enum Controls
 extern bool connected;
 extern BLECharacteristic* pTxCharacteristic;
 extern BLECharacteristic* pRxCharacteristic;
+extern std::string rxValue;
 
 void taskServer(void*);
 

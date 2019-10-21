@@ -6,6 +6,7 @@
 
 BLECharacteristic* pTxCharacteristic = NULL;
 BLECharacteristic* pRxCharacteristic = NULL;
+std::string rxValue = "PINE";
 
 const char* keyControls[8] = {"q","d","z","s","a","e","o","p"};
 BLEHIDDevice* hid;
@@ -45,9 +46,9 @@ class MyCallbacks : public BLEServerCallbacks {
     uint8_t* value = (uint8_t*)(me->getValue().c_str());
     ESP_LOGI(LOG_TAG, "special keys: %d", *value);
 
-    std::string rxValue = me->getValue();
+    rxValue = me->getValue();
 
-    if (rxValue.length() > 0) 
+    if (rxValue.length() > 0)
     {
       Serial.println("*********");
       Serial.print("Received Value: ");
