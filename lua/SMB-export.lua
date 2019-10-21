@@ -9,13 +9,13 @@ function poll_data()
 		lives_int = lives_int + 1
 	end
 	local lives = string.format(
-		"LIVES: %02d\n",
+		"%02d",
 		lives_int
 	)
 
 	-- getting and formatting coins value
 	local coins = string.format(
-		"COINS: %02d\n",
+		"%02d",
 		memory.readbyte(0x075e)
 	)
 
@@ -26,7 +26,7 @@ function poll_data()
 	-- weird, only the [1-2 ; 1-4] level have an offset of one
 	if (world == 1 and level >= 2) then level = level - 1 end
 	local world_level = string.format(
-		"WORLD: %d-%d\n",
+		"%d-%d",
 		world,
 		level
 	)
@@ -39,21 +39,29 @@ function poll_data()
 	end
 	score[#score+1] = "0"
 
-	local status = memory.readbyte(0x0756)
-	if status == 0 then
-		status = "SMOL"
-	elseif status == 1 then
-		status = "BIGG"
+	-- local status = memory.readbyte(0x0756)
+	-- if status == 0 then
+	-- 	status = "SMOL"
+	-- elseif status == 1 then
+	-- 	status = "BIGG"
+	-- else
+	-- 	status = "FAYA"
+	-- end
+
+	local he_ded = memory.readbyte(0x000e)
+	if he_ded == 0x08 then
+		he_ded = string.format("%1d", 1)
 	else
-		status = "FAYA"
+		he_ded = string.format("%1d", 0)
 	end
+
 
 	score = table.concat(score)
 	data[0] = lives
 	data[1] = coins
 	data[2] = world_level
-	data[3] = string.format("SCORE: %s\n", score)
-	data[4] = string.format("STATUS: %s\n", status)
+	data[3] = string.format("%s", score)
+	data[4] = string.format("%s", he_ded)
 
 	return data
 end
@@ -70,10 +78,15 @@ function dump_data(data)
 	-- Rewinding file to beginning
 	file:seek("set", 0);
 	file:write(world_level)
+	file:write(';')
 	file:write(lives)
+	file:write(';')
 	file:write(coins)
+	file:write(';')
 	file:write(score)
+	file:write(';')
 	file:write(status)
+	file:write(';')
 end
 
 while (true) do
