@@ -28,6 +28,7 @@
 #define SUPPOSED_X_VALUE_AT_MINUS_1G 0.55
 #define SUPPOSED_Y_VALUE_AT_MINUS_1G 0.55
 
+xyz MMA7361_getRawValues();
 xyz MMA7361_getValues();
 
 #endif

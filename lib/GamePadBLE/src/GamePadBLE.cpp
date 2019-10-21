@@ -196,6 +196,17 @@ void pressThree(Controls first, Controls second, Controls third) {
   }
 }
 
+void sendTrame(uint8_t * chars) {
+  if(connected){
+    KEYMAP firstMap = keymap_fr[chars[0]];
+    KEYMAP secondMap = keymap_fr[chars[1]];
+    KEYMAP thirdMap = keymap_fr[chars[2]];
+    uint8_t msg[] = {0x0, 0x0, firstMap.usage, secondMap.usage, thirdMap.usage, 0x0, 0x0, 0x0};
+    input->setValue(msg,sizeof(msg));
+    input->notify();
+  }
+}
+
 void pressForSeconds(Controls key, float seconds){
   unsigned long now = millis();
   unsigned long until = now + seconds*1000;

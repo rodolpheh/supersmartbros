@@ -37,5 +37,6 @@ void initGamePad(const char* left, const char* right, const char* up, const char
 void press(Controls direction);
 void release();
 void pressForSeconds(Controls direction, float seconds);
+void sendTrame(uint8_t * chars);
 
 #endif
