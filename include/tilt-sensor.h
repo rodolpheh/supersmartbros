@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#define TILT_PIN D0
+#define TILT_PIN 13
 
 bool was_triggered();
 
