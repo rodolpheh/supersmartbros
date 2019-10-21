@@ -7,6 +7,22 @@
 bool pressed = false;
 bool jumped = false;
 
+std::string current = "1-1;02;03;0003550;1;";
+std::string world = "";
+std::string lives = "";
+std::string coins = "";
+std::string score_str = "";
+std::string status = "";
+
+void parseData() {
+  world = current.substr(0,3);
+  lives = current.substr(5, 1);
+  coins = current.substr(7, 2);
+  score_str = current.substr(10,7);
+  status = current.substr(19, 1);
+}
+
+
 Controls controls[3];
 
 unsigned long now = millis();
@@ -78,6 +94,22 @@ void loop() {
   }
 
   now = millis();
+
+  if (current != rxValue) {
+    parseData();
+
+    if (status == "1") {
+      display_screen_2((char *) world.c_str(), (char *) lives.c_str());
+
+    } else {
+      display_screen_1(
+        (char *) lives.c_str(),
+        (char *) coins.c_str(),
+        (char *) score_str.c_str());
+    }
+  }
+
+  current = rxValue;
 
   vTaskDelay(1);
 }
