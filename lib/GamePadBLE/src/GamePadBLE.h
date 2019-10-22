@@ -28,6 +28,7 @@ enum Controls
 extern bool connected;
 extern BLECharacteristic* pTxCharacteristic;
 extern BLECharacteristic* pRxCharacteristic;
+extern std::string rxValue;
 
 void taskServer(void*);
 
@@ -35,6 +36,8 @@ void initGamePad(const char* left, const char* right, const char* up, const char
                  const char* A, const char* B, const char* start, const char* select);
 
 void press(Controls direction);
+void release();
 void pressForSeconds(Controls direction, float seconds);
+void sendTrame(uint8_t * chars);
 
 #endif

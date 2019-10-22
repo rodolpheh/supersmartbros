@@ -73,23 +73,32 @@ class BLEComm(gatt.Device):
                 if (characteristic.uuid == WRITE_CHARACTERISTIC):
                     self.write_characteristic = characteristic
 
-                for descriptor in characteristic.descriptors:
-                    try:
-                        self.append_log(
-                            "[{}]\t\t\tDescriptor [{}] ({})".format(
-                                self.mac_address,
-                                descriptor.uuid,
-                                descriptor.read_value()
+                try:
+                    for descriptor in characteristic.descriptors:
+                        try:
+                            self.append_log(
+                                "[{}]\t\t\tDescriptor [{}] ({})".format(
+                                    self.mac_address,
+                                    descriptor.uuid,
+                                    descriptor.read_value()
+                                )
                             )
-                        )
-                    except AttributeError as err:
-                        self.append_log(
-                            "[{}]\t\t\tDescriptor [{}] ({})".format(
-                                self.mac_address,
-                                descriptor.uuid,
-                                err
+                        except AttributeError as err:
+                            self.append_log(
+                                "[{}]\t\t\tDescriptor [{}] ({})".format(
+                                    self.mac_address,
+                                    descriptor.uuid,
+                                    err
+                                )
                             )
+                except AttributeError as err:
+                    self.append_log(
+                        "[{}]\t\t\tCharacteristic [{}] ({})".format(
+                            self.mac_address,
+                            characteristic.uuid,
+                            err
                         )
+                    )
 
         self.setup = True
 

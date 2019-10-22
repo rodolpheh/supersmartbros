@@ -1,5 +1,13 @@
 #include "MMA7361.h"
 
+xyz MMA7361_getRawValues() {
+  return (xyz) {
+    analogRead(X_PIN),
+    analogRead(Y_PIN),
+    analogRead(Z_PIN)
+  };
+}
+
 xyz MMA7361_getValues() {
   // Compensate badly calibrated chip
   int x_offset = (X_VALUE_AT_0G - SUPPOSED_X_VALUE_AT_0G) / 3.3 * 4096;

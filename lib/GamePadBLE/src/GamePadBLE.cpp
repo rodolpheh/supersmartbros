@@ -6,7 +6,7 @@
 
 BLECharacteristic* pTxCharacteristic = NULL;
 BLECharacteristic* pRxCharacteristic = NULL;
-
+std::string rxValue = "0-1;09;69;6969696;0;";
 const char* keyControls[8] = {"q","d","z","s","a","e","o","p"};
 BLEHIDDevice* hid;
 BLECharacteristic* input;
@@ -45,9 +45,9 @@ class MyCallbacks : public BLEServerCallbacks {
     uint8_t* value = (uint8_t*)(me->getValue().c_str());
     ESP_LOGI(LOG_TAG, "special keys: %d", *value);
 
-    std::string rxValue = me->getValue();
+    rxValue = me->getValue();
 
-    if (rxValue.length() > 0) 
+    if (rxValue.length() > 0)
     {
       Serial.println("*********");
       Serial.print("Received Value: ");
@@ -163,25 +163,55 @@ void press(Controls direction) {
 
     while(*hello){
       KEYMAP map = keymap_fr[(uint8_t)*hello];
-      uint8_t msg[] = {map.modifier, 0x0, map.usage, 0x0,0x0,0x0,0x0,0x0};
+      uint8_t msg[] = {map.modifier, 0x0, map.usage, 0x0, 0x0, 0x0, 0x0, 0x0};
       input->setValue(msg,sizeof(msg));
       input->notify();
       hello++;
-      uint8_t msg1[] = {0x0, 0x0, 0x0, 0x0,0x0,0x0,0x0,0x0};
-
-      input->setValue(msg1,sizeof(msg1));
-      input->notify();
-      delay(10);
     }
   }
-  delay(50);
+}
+
+void release() {
+  if (connected) {
+    uint8_t msg1[] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+    input->setValue(msg1,sizeof(msg1));
+    input->notify();
+  }
+}
+
+void pressThree(Controls first, Controls second, Controls third) {
+  if(connected){
+
+    const char* firstChar = keyControls[(int)first];
+    const char* secondChar = keyControls[(int)second];
+    const char* thirdChar = keyControls[(int)third];
+
+    KEYMAP firstMap = keymap_fr[(uint8_t)*firstChar];
+    KEYMAP secondMap = keymap_fr[(uint8_t)*secondChar];
+    KEYMAP thirdMap = keymap_fr[(uint8_t)*thirdChar];
+
+    uint8_t msg[] = {firstMap.modifier, 0x0, firstMap.usage, secondMap.usage, thirdMap.usage, 0x0, 0x0, 0x0};
+    input->setValue(msg,sizeof(msg));
+    input->notify();
+  }
+}
+
+void sendTrame(uint8_t * chars) {
+  if(connected){
+    KEYMAP firstMap = keymap_fr[chars[0]];
+    KEYMAP secondMap = keymap_fr[chars[1]];
+    KEYMAP thirdMap = keymap_fr[chars[2]];
+    uint8_t msg[] = {0x0, 0x0, firstMap.usage, secondMap.usage, thirdMap.usage, 0x0, 0x0, 0x0};
+    input->setValue(msg,sizeof(msg));
+    input->notify();
+  }
 }
 
 void pressForSeconds(Controls key, float seconds){
   unsigned long now = millis();
   unsigned long until = now + seconds*1000;
   //unsigned long numberOfPress = 0;
-  while(now < until){
+  while(now < until) {
     press(key);
     now = millis();
     //numberOfPress ++;
