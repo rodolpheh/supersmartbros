@@ -14,6 +14,7 @@ bool runned = false;
 uint8_t trame[] = {0x0, 0x0, 0x0};
 bool trame_changed = false;
 std::string current = "1-1;02;03;0003550;1;";
+std::string previous = "1-1;02;03;0003550;1;";
 std::string world = "";
 std::string lives = "";
 std::string coins = "";
@@ -21,13 +22,13 @@ std::string score_str = "";
 std::string status = "";
 
 void parseData() {
+  Serial.println(current.c_str());
   world = current.substr(0,3);
   lives = current.substr(5, 1);
   coins = current.substr(7, 2);
   score_str = current.substr(10,7);
   status = current.substr(18, 1);
 }
-
 
 Controls controls[3];
 
@@ -128,10 +129,12 @@ void loop() {
     trame_changed = false;
   }
 
-  if (current != rxValue) {
+  current = rxValue;
+  if (current != previous) {
+    Serial.println(current.c_str());
     parseData();
 
-    if (status == "1") {
+    if (status != "1") {
       display_screen_2((char *) world.c_str(), (char *) lives.c_str());
 
     } else {
@@ -142,7 +145,11 @@ void loop() {
     }
   }
 
-  current = rxValue;
+  // display_screen_1((char *) "2", (char *) "55",(char *)"000555");
+
+  // Serial.println(rxValue.c_str());
+
+  previous = current;
 
   vTaskDelay(1);
 }

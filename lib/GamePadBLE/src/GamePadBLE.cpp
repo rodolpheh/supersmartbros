@@ -6,8 +6,7 @@
 
 BLECharacteristic* pTxCharacteristic = NULL;
 BLECharacteristic* pRxCharacteristic = NULL;
-std::string rxValue = "PINE";
-
+std::string rxValue = "0-1;09;69;6969696;0;";
 const char* keyControls[8] = {"q","d","z","s","a","e","o","p"};
 BLEHIDDevice* hid;
 BLECharacteristic* input;
